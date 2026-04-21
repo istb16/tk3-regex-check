@@ -28,7 +28,7 @@ jobs:
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_TK3_REGEX_CHECK }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}'
           entryPoint: ${{ env.working-directory }}
           channelId: live
-          projectId: tk3-regex-check
+          projectId: '${{ secrets.FIREBASE_PROJECT_ID }}'
