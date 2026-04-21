@@ -19,5 +19,8 @@
     "tailwindcss": "^4.2.3",
     "typescript": "~6.0.2",
     "vite": "^8.0.9"
+  },
+  "dependencies": {
+    "firebase": "^12.12.1"
   }
 }
