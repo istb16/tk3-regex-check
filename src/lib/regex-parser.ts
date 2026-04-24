@@ -1,5 +1,16 @@
 import type { NodeKind, Quantifier, RegexNode } from './types';
 
+function describeQuantifier(q: Quantifier): string {
+  let label: string;
+  if      (q.min === 0 && q.max === null) label = '0+ times';
+  else if (q.min === 1 && q.max === null) label = '1+ times';
+  else if (q.min === 0 && q.max === 1)    label = 'optional';
+  else if (q.min === q.max)               label = `exactly ${q.min}`;
+  else if (q.max === null)                label = `${q.min}+ times`;
+  else                                    label = `${q.min}–${q.max} times`;
+  return q.lazy ? `${label} (lazy)` : label;
+}
+
 class Parser {
   private pos = 0;
   private groupCount = 0;
@@ -7,8 +18,7 @@ class Parser {
   constructor(private src: string) {}
 
   parse(): RegexNode {
-    const node = this.parseAlternation();
-    return node;
+    return this.parseAlternation();
   }
 
   private parseAlternation(): RegexNode {
@@ -65,16 +75,6 @@ class Parser {
     const q = this.parseQuantifier();
     if (!q) return atom;
 
-    let qLabel = q.raw;
-    if (q.min === 0 && q.max === null) qLabel = `0+ times`;
-    else if (q.min === 1 && q.max === null) qLabel = `1+ times`;
-    else if (q.min === 0 && q.max === 1) qLabel = `optional`;
-    else if (q.min === q.max) qLabel = `exactly ${q.min}`;
-    else if (q.max === null) qLabel = `${q.min}+ times`;
-    else qLabel = `${q.min}–${q.max} times`;
-
-    if (q.lazy) qLabel += ' (lazy)';
-
     return {
       kind: atom.kind,
       raw: atom.raw + q.raw,
@@ -86,7 +86,7 @@ class Parser {
       capturing: atom.capturing,
       groupIndex: atom.groupIndex,
       name: atom.name,
-      quantifier: { ...q, raw: qLabel },
+      quantifier: { ...q, raw: describeQuantifier(q) },
     };
   }
 
@@ -101,7 +101,7 @@ class Parser {
     } else if (ch === '+') {
       min = 1; max = null; rawQ = '+'; this.pos++;
     } else if (ch === '?') {
-      min = 0; max = 1; rawQ = '?'; this.pos++;
+      min = 0; max = 1;    rawQ = '?'; this.pos++;
     } else if (ch === '{') {
       const bStart = this.pos;
       this.pos++;
@@ -160,14 +160,7 @@ class Parser {
     }
 
     this.pos++;
-    const escaped = /[.*+?^${}()|[\]\\]/.test(ch);
-    return {
-      kind: 'literal',
-      raw: ch,
-      start,
-      end: this.pos,
-      label: escaped ? `"${ch}"` : `"${ch}"`,
-    };
+    return { kind: 'literal', raw: ch, start, end: this.pos, label: `"${ch}"` };
   }
 
   private parseGroup(): RegexNode {
@@ -186,73 +179,45 @@ class Parser {
 
       if (next === ':') {
         this.pos++;
-        kind = 'nonCapturing';
-        capturing = false;
-        label = 'Non-capturing';
+        kind = 'nonCapturing'; capturing = false; label = 'Non-capturing';
       } else if (next === '<') {
         this.pos++;
         const peek = this.src[this.pos];
         if (peek === '=') {
           this.pos++;
-          kind = 'lookbehind';
-          negative = false;
-          label = 'Lookbehind (?<=…)';
+          kind = 'lookbehind'; negative = false; label = 'Lookbehind (?<=…)';
         } else if (peek === '!') {
           this.pos++;
-          kind = 'lookbehind';
-          negative = true;
-          label = 'Neg. Lookbehind (?<!…)';
+          kind = 'lookbehind'; negative = true; label = 'Neg. Lookbehind (?<!…)';
         } else {
           let n = '';
           while (this.pos < this.src.length && this.src[this.pos] !== '>') n += this.src[this.pos++];
           this.pos++;
-          name = n;
-          this.groupCount++;
-          kind = 'group';
-          label = `Named group «${n}»`;
+          name = n; this.groupCount++; kind = 'group'; label = `Named group «${n}»`;
         }
       } else if (next === '=') {
         this.pos++;
-        kind = 'lookahead';
-        negative = false;
-        label = 'Lookahead (?=…)';
+        kind = 'lookahead'; negative = false; label = 'Lookahead (?=…)';
       } else if (next === '!') {
         this.pos++;
-        kind = 'lookahead';
-        negative = true;
-        label = 'Neg. Lookahead (?!…)';
+        kind = 'lookahead'; negative = true; label = 'Neg. Lookahead (?!…)';
       } else if (next === '>') {
         this.pos++;
-        kind = 'atomic';
-        capturing = false;
-        label = 'Atomic group (?>…)';
+        kind = 'atomic'; capturing = false; label = 'Atomic group (?>…)';
       } else {
         this.pos--;
         this.groupCount++;
-        kind = 'group';
         label = `Group #${this.groupCount}`;
       }
     } else {
       this.groupCount++;
-      const idx = this.groupCount;
-      label = `Capture group #${idx}`;
+      label = `Capture group #${this.groupCount}`;
     }
 
     const inner = this.parseAlternation();
-
     if (this.pos < this.src.length && this.src[this.pos] === ')') this.pos++;
 
-    return {
-      kind,
-      raw: this.src.slice(start, this.pos),
-      start,
-      end: this.pos,
-      label,
-      children: [inner],
-      negative,
-      capturing,
-      name,
-    };
+    return { kind, raw: this.src.slice(start, this.pos), start, end: this.pos, label, children: [inner], negative, capturing, name };
   }
 
   private parseCharClass(): RegexNode {
@@ -266,8 +231,8 @@ class Parser {
     let depth = 1;
     while (this.pos < this.src.length && depth > 0) {
       if (this.src[this.pos] === '\\') { this.pos += 2; continue; }
-      if (this.src[this.pos] === '[') depth++;
-      else if (this.src[this.pos] === ']') { depth--; }
+      if (this.src[this.pos] === '[')  depth++;
+      else if (this.src[this.pos] === ']') depth--;
       this.pos++;
     }
 
@@ -307,32 +272,19 @@ class Parser {
       case 'r': label = '\\r  Carriage return'; break;
       case '0': label = '\\0  Null char'; break;
       case 'p': {
-        if (this.src[this.pos] === '{') {
-          this.pos++;
-          let cat = '';
-          while (this.pos < this.src.length && this.src[this.pos] !== '}') cat += this.src[this.pos++];
-          this.pos++;
-          label = `\\p{${cat}}  Unicode property`;
-        } else { label = '\\p  Unicode property'; }
+        const cat = this.readBracedContent();
+        label = cat ? `\\p{${cat}}  Unicode property` : '\\p  Unicode property';
         break;
       }
       case 'P': {
-        if (this.src[this.pos] === '{') {
-          this.pos++;
-          let cat = '';
-          while (this.pos < this.src.length && this.src[this.pos] !== '}') cat += this.src[this.pos++];
-          this.pos++;
-          label = `\\P{${cat}}  Negated Unicode`;
-        } else { label = '\\P  Negated Unicode'; }
+        const cat = this.readBracedContent();
+        label = cat ? `\\P{${cat}}  Negated Unicode` : '\\P  Negated Unicode';
         break;
       }
       case 'u': {
         if (this.src[this.pos] === '{') {
-          this.pos++;
-          let hex = '';
-          while (this.pos < this.src.length && this.src[this.pos] !== '}') hex += this.src[this.pos++];
-          this.pos++;
-          label = `\\u{${hex}}  Unicode code point`;
+          const code = this.readBracedContent();
+          label = `\\u{${code}}  Unicode code point`;
         } else {
           const hex = this.src.slice(this.pos, this.pos + 4);
           this.pos += Math.min(4, this.src.length - this.pos);
@@ -346,23 +298,30 @@ class Parser {
           let name = '';
           while (this.pos < this.src.length && this.src[this.pos] !== '>') name += this.src[this.pos++];
           this.pos++;
-          kind = 'backreference';
-          label = `\\k<${name}>  Named backref`;
+          kind = 'backreference'; label = `\\k<${name}>  Named backref`;
         }
         break;
       }
       default: {
         if (ch >= '1' && ch <= '9') {
-          kind = 'backreference';
-          label = `\\${ch}  Backref #${ch}`;
+          kind = 'backreference'; label = `\\${ch}  Backref #${ch}`;
         } else {
-          kind = 'literal';
-          label = `Escaped "${ch}"`;
+          kind = 'literal'; label = `Escaped "${ch}"`;
         }
       }
     }
 
     return { kind, raw: this.src.slice(start, this.pos), start, end: this.pos, label };
+  }
+
+  // Reads the content of a {…} block and advances past the closing '}'
+  private readBracedContent(): string {
+    if (this.src[this.pos] !== '{') return '';
+    this.pos++;
+    let content = '';
+    while (this.pos < this.src.length && this.src[this.pos] !== '}') content += this.src[this.pos++];
+    if (this.pos < this.src.length) this.pos++;
+    return content;
   }
 }
 

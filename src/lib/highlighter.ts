@@ -10,7 +10,6 @@ export function buildMatches(
   const t0 = performance.now();
   try {
     const safeFlags = flags.includes('g') ? flags : flags + 'g';
-    const useD = flags.includes('d');
     const re = new RegExp(pattern, safeFlags);
 
     const results: MatchResult[] = [];
@@ -94,7 +93,9 @@ export function buildSegments(text: string, matches: MatchResult[]): TextSegment
     });
   });
 
-  events.sort((a, b) => a.pos - b.pos || (a.open ? -1 : 1));
+  // Close events must be processed before open events at the same position,
+  // otherwise an adjacent match's open event gets wiped by the preceding close.
+  events.sort((a, b) => a.pos - b.pos || (a.open ? 1 : -1));
 
   const segments: TextSegment[] = [];
   let pos = 0;

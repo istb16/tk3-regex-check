@@ -29,6 +29,7 @@ export const translations = {
     },
     test: {
       title: 'Test String',
+      chars: 'chars',
       highlightsOn: 'Highlights ON',
       raw: 'Raw',
       placeholder: 'Paste or type your test string here…',
@@ -121,6 +122,7 @@ export const translations = {
     },
     test: {
       title: 'テスト文字列',
+      chars: '文字',
       highlightsOn: 'ハイライト表示',
       raw: 'プレーン',
       placeholder: 'テスト文字列をここに入力またはペースト…',

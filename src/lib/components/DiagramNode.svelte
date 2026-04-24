@@ -4,54 +4,32 @@
   import { langStore, translations } from '../i18n.svelte';
 
   const td = $derived(translations[langStore.current].diagram);
-
   const { node, depth = 0 }: { node: RegexNode; depth?: number } = $props();
 
-  const colorMap: Record<string, string> = {
-    group:         'border-blue-500/60 bg-blue-500/10 text-blue-300',
-    nonCapturing:  'border-slate-500/60 bg-slate-500/10 text-slate-300',
-    lookahead:     'border-violet-500/60 bg-violet-500/10 text-violet-300',
-    lookbehind:    'border-purple-500/60 bg-purple-500/10 text-purple-300',
-    atomic:        'border-orange-500/60 bg-orange-500/10 text-orange-300',
-    charClass:     'border-emerald-500/60 bg-emerald-500/10 text-emerald-300',
-    escape:        'border-cyan-500/60 bg-cyan-500/10 text-cyan-300',
-    anchor:        'border-rose-500/60 bg-rose-500/10 text-rose-300',
-    wildcard:      'border-yellow-500/60 bg-yellow-500/10 text-yellow-300',
-    literal:       'border-slate-700/40 bg-transparent text-slate-400',
-    backreference: 'border-pink-500/60 bg-pink-500/10 text-pink-300',
-    alternation:   'border-amber-500/60 bg-amber-500/10 text-amber-300',
-    sequence:      'border-transparent bg-transparent text-slate-400',
-    error:         'border-red-500/60 bg-red-500/10 text-red-300',
+  // border/background/text, badge background/text, short label — all in one place
+  const NODE_STYLES: Record<string, { border: string; badge: string; label: string }> = {
+    group:         { border: 'border-blue-500/60 bg-blue-500/10 text-blue-300',       badge: 'bg-blue-500/20 text-blue-400',       label: 'group'   },
+    nonCapturing:  { border: 'border-slate-500/60 bg-slate-500/10 text-slate-300',    badge: 'bg-slate-500/20 text-slate-400',     label: 'ncg'     },
+    lookahead:     { border: 'border-violet-500/60 bg-violet-500/10 text-violet-300', badge: 'bg-violet-500/20 text-violet-400',   label: 'look→'   },
+    lookbehind:    { border: 'border-purple-500/60 bg-purple-500/10 text-purple-300', badge: 'bg-purple-500/20 text-purple-400',   label: '←look'   },
+    atomic:        { border: 'border-orange-500/60 bg-orange-500/10 text-orange-300', badge: 'bg-orange-500/20 text-orange-400',   label: 'atom'    },
+    charClass:     { border: 'border-emerald-500/60 bg-emerald-500/10 text-emerald-300', badge: 'bg-emerald-500/20 text-emerald-400', label: 'set'  },
+    escape:        { border: 'border-cyan-500/60 bg-cyan-500/10 text-cyan-300',       badge: 'bg-cyan-500/20 text-cyan-400',       label: 'esc'     },
+    anchor:        { border: 'border-rose-500/60 bg-rose-500/10 text-rose-300',       badge: 'bg-rose-500/20 text-rose-400',       label: 'anchor'  },
+    wildcard:      { border: 'border-yellow-500/60 bg-yellow-500/10 text-yellow-300', badge: 'bg-yellow-500/20 text-yellow-400',   label: 'any'     },
+    literal:       { border: 'border-slate-700/40 bg-transparent text-slate-400',     badge: '',                                   label: 'lit'     },
+    backreference: { border: 'border-pink-500/60 bg-pink-500/10 text-pink-300',       badge: 'bg-pink-500/20 text-pink-400',       label: 'backref' },
+    alternation:   { border: 'border-amber-500/60 bg-amber-500/10 text-amber-300',    badge: 'bg-amber-500/20 text-amber-400',     label: 'alt'     },
+    sequence:      { border: 'border-transparent bg-transparent text-slate-400',      badge: '',                                   label: ''        },
+    error:         { border: 'border-red-500/60 bg-red-500/10 text-red-300',          badge: 'bg-red-500/20 text-red-400',         label: 'ERR'     },
   };
 
-  const badgeMap: Record<string, string> = {
-    group:         'bg-blue-500/20 text-blue-400',
-    nonCapturing:  'bg-slate-500/20 text-slate-400',
-    lookahead:     'bg-violet-500/20 text-violet-400',
-    lookbehind:    'bg-purple-500/20 text-purple-400',
-    atomic:        'bg-orange-500/20 text-orange-400',
-    charClass:     'bg-emerald-500/20 text-emerald-400',
-    escape:        'bg-cyan-500/20 text-cyan-400',
-    anchor:        'bg-rose-500/20 text-rose-400',
-    wildcard:      'bg-yellow-500/20 text-yellow-400',
-    literal:       '',
-    backreference: 'bg-pink-500/20 text-pink-400',
-    alternation:   'bg-amber-500/20 text-amber-400',
-    error:         'bg-red-500/20 text-red-400',
-  };
+  const CONTAINER_KINDS = new Set([
+    'group', 'nonCapturing', 'lookahead', 'lookbehind', 'atomic', 'alternation', 'sequence',
+  ]);
 
-  const kindLabel: Record<string, string> = {
-    group: 'group', nonCapturing: 'ncg', lookahead: 'look→',
-    lookbehind: '←look', atomic: 'atom', charClass: 'set',
-    escape: 'esc', anchor: 'anchor', wildcard: 'any',
-    literal: 'lit', backreference: 'backref', alternation: 'alt',
-    sequence: '', error: 'ERR',
-  };
-
-  const isContainer = $derived(['group','nonCapturing','lookahead','lookbehind','atomic','alternation','sequence'].includes(node.kind));
-  const cls = $derived(colorMap[node.kind] ?? colorMap.error);
-  const badge = $derived(badgeMap[node.kind] ?? '');
-  const kl = $derived(kindLabel[node.kind] ?? node.kind);
+  const styles      = $derived(NODE_STYLES[node.kind] ?? NODE_STYLES.error);
+  const isContainer = $derived(CONTAINER_KINDS.has(node.kind));
 
   let collapsed = $state(false);
   $effect(() => { collapsed = depth > 2; });
@@ -63,10 +41,11 @@
       <DiagramNode node={child} depth={depth} />
     {/each}
   </div>
+
 {:else if node.kind === 'alternation'}
-  <div class="flex flex-col gap-0.5 border rounded {cls} px-2 py-1">
+  <div class="flex flex-col gap-0.5 border rounded {styles.border} px-2 py-1">
     <div class="flex items-center gap-1 text-xs mb-1">
-      <span class="px-1 py-0.5 rounded text-[10px] font-bold {badge}">{kl}</span>
+      <span class="px-1 py-0.5 rounded text-[10px] font-bold {styles.badge}">{styles.label}</span>
       <span class="text-amber-300/70 text-[10px]">{node.label}</span>
       {#if node.quantifier}
         <span class="ml-auto text-[10px] bg-amber-400/20 text-amber-300 px-1 rounded">{node.quantifier.raw}</span>
@@ -81,10 +60,11 @@
       </div>
     {/each}
   </div>
+
 {:else if isContainer && (node.children?.length ?? 0) > 0}
-  <div class="border rounded {cls} px-2 py-1 flex flex-col gap-1">
+  <div class="border rounded {styles.border} px-2 py-1 flex flex-col gap-1">
     <div class="flex items-center gap-1.5">
-      <span class="text-[10px] font-bold px-1 py-0.5 rounded {badge}">{kl}</span>
+      <span class="text-[10px] font-bold px-1 py-0.5 rounded {styles.badge}">{styles.label}</span>
       <span class="text-[11px] opacity-80 truncate max-w-[180px]">{node.label}</span>
       {#if node.negative}
         <span class="text-[10px] bg-red-500/20 text-red-400 px-1 rounded">{td.neg}</span>
@@ -108,15 +88,13 @@
       </div>
     {/if}
   </div>
+
 {:else}
   <!-- Leaf node -->
-  <div
-    class="inline-flex flex-col items-start border rounded px-1.5 py-0.5 {cls}"
-    title={node.label}
-  >
+  <div class="inline-flex flex-col items-start border rounded px-1.5 py-0.5 {styles.border}" title={node.label}>
     <div class="flex items-center gap-1">
-      {#if kl && node.kind !== 'literal'}
-        <span class="text-[9px] font-bold {badge} px-0.5 rounded opacity-80">{kl}</span>
+      {#if styles.label && node.kind !== 'literal'}
+        <span class="text-[9px] font-bold {styles.badge} px-0.5 rounded opacity-80">{styles.label}</span>
       {/if}
       <code class="text-[12px] font-mono">{node.raw}</code>
       {#if node.quantifier}

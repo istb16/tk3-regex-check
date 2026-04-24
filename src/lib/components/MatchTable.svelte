@@ -9,7 +9,10 @@
 
   let selected = $state(0);
   const hasIndices = $derived(flags.includes('d'));
-  const current = $derived(matches[selected] ?? null);
+  const current    = $derived(matches[selected] ?? null);
+
+  // Reset selection whenever the match list changes (e.g. new pattern entered).
+  $effect(() => { if (matches) selected = 0; });
 </script>
 
 {#if matches.length === 0}

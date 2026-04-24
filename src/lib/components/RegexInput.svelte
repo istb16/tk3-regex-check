@@ -18,29 +18,17 @@
 
   const t = $derived(translations[langStore.current]);
 
-  const flagDefs = $derived([
-    { flag: 'g', label: 'g', title: t.flagTooltips['g'] },
-    { flag: 'i', label: 'i', title: t.flagTooltips['i'] },
-    { flag: 'm', label: 'm', title: t.flagTooltips['m'] },
-    { flag: 's', label: 's', title: t.flagTooltips['s'] },
-    { flag: 'u', label: 'u', title: t.flagTooltips['u'] },
-    { flag: 'v', label: 'v', title: t.flagTooltips['v'] },
-    { flag: 'd', label: 'd', title: t.flagTooltips['d'] },
-    { flag: 'y', label: 'y', title: t.flagTooltips['y'] },
-  ]);
+  // Flag keys are static; only tooltips need reactivity
+  const FLAG_KEYS = ['g', 'i', 'm', 's', 'u', 'v', 'd', 'y'] as const;
+  const flagDefs  = $derived(FLAG_KEYS.map(flag => ({ flag, title: t.flagTooltips[flag] })));
 
   function toggleFlag(f: string) {
     if (flags.includes(f)) {
-      if (f === 'u' && flags.includes('v')) return;
       onFlagsChange(flags.replace(f, ''));
     } else {
-      if (f === 'v' && flags.includes('u')) {
-        onFlagsChange(flags.replace('u', '') + f);
-      } else if (f === 'u' && flags.includes('v')) {
-        onFlagsChange(flags.replace('v', '') + f);
-      } else {
-        onFlagsChange(flags + f);
-      }
+      // u and v are mutually exclusive — switching one removes the other
+      const base = (f === 'u' || f === 'v') ? flags.replace(/[uv]/g, '') : flags;
+      onFlagsChange(base + f);
     }
   }
 </script>
@@ -59,18 +47,15 @@
       class="flex-1 bg-[#0f1018] text-[#f0f4ff] font-mono text-sm px-2 py-2.5 outline-none placeholder:text-slate-600"
     />
     <span class="flex items-center px-1 text-violet-400/80 text-lg font-mono bg-[#13141e] select-none">/</span>
-    <!-- Flags display in the bar -->
     <div class="flex items-center gap-0.5 px-2 bg-[#13141e]">
-      {#each flagDefs as { flag, label, title }}
+      {#each flagDefs as { flag, title }}
         <button
           onclick={() => toggleFlag(flag)}
           {title}
           class="w-6 h-6 rounded text-xs font-mono font-bold transition-all {flags.includes(flag)
             ? 'bg-violet-500/30 text-violet-300 shadow-[0_0_6px_rgba(124,58,237,0.4)]'
             : 'text-slate-600 hover:text-slate-400'}"
-        >
-          {label}
-        </button>
+        >{flag}</button>
       {/each}
     </div>
   </div>

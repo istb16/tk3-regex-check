@@ -15,7 +15,6 @@
   const t = $derived(translations[langStore.current]);
 
   let showRaw = $state(false);
-  let highlightEl: HTMLDivElement | undefined = $state();
 
   const MAX_HIGHLIGHT_CHARS = 50_000;
   const tooLarge = $derived(text.length > MAX_HIGHLIGHT_CHARS);
@@ -25,7 +24,7 @@
   <div class="flex items-center justify-between px-3 py-2 border-b border-[#1e2030]">
     <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">{t.test.title}</span>
     <div class="flex items-center gap-2">
-      <span class="text-xs text-slate-600">{text.length.toLocaleString()} {langStore.current === 'ja' ? '文字' : 'chars'}</span>
+      <span class="text-xs text-slate-600">{text.length.toLocaleString()} {t.test.chars}</span>
       <button
         onclick={() => showRaw = !showRaw}
         class="text-xs px-2 py-0.5 rounded border border-[#1e2030] hover:border-[#2d3050] transition-colors {showRaw ? 'text-violet-400' : 'text-slate-500'}"
@@ -48,7 +47,6 @@
     <!-- Highlight overlay (behind textarea) -->
     {#if !showRaw && !tooLarge && segments.length > 0}
       <div
-        bind:this={highlightEl}
         aria-hidden="true"
         class="absolute inset-0 font-mono text-sm leading-6 p-3 overflow-hidden pointer-events-none whitespace-pre-wrap break-words z-0 text-[#c8d0e0]"
       >
