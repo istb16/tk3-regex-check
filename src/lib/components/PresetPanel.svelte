@@ -1,14 +1,14 @@
 <script lang="ts">
   import { presets, categories } from '../presets';
   import type { Preset } from '../types';
-  import { langStore, translations } from '../i18n.svelte';
+  import { langStore } from '../i18n.svelte';
 
   const {
     onSelect,
     activeId,
   }: { onSelect: (p: Preset) => void; activeId: string } = $props();
 
-  const t = $derived(translations[langStore.current]);
+  const t = $derived(langStore.t);
 
   let filterCategory = $state('All');
   let search = $state('');

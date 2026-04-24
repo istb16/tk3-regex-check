@@ -1,27 +1,27 @@
 <script lang="ts">
   import DiagramNode from './DiagramNode.svelte';
   import type { RegexNode } from '../types';
-  import { langStore, translations } from '../i18n.svelte';
+  import { langStore } from '../i18n.svelte';
 
-  const td = $derived(translations[langStore.current].diagram);
+  const td = $derived(langStore.t.diagram);
   const { node, depth = 0 }: { node: RegexNode; depth?: number } = $props();
 
   // border/background/text, badge background/text, short label — all in one place
   const NODE_STYLES: Record<string, { border: string; badge: string; label: string }> = {
-    group:         { border: 'border-blue-500/60 bg-blue-500/10 text-blue-300',       badge: 'bg-blue-500/20 text-blue-400',       label: 'group'   },
-    nonCapturing:  { border: 'border-slate-500/60 bg-slate-500/10 text-slate-300',    badge: 'bg-slate-500/20 text-slate-400',     label: 'ncg'     },
-    lookahead:     { border: 'border-violet-500/60 bg-violet-500/10 text-violet-300', badge: 'bg-violet-500/20 text-violet-400',   label: 'look→'   },
-    lookbehind:    { border: 'border-purple-500/60 bg-purple-500/10 text-purple-300', badge: 'bg-purple-500/20 text-purple-400',   label: '←look'   },
-    atomic:        { border: 'border-orange-500/60 bg-orange-500/10 text-orange-300', badge: 'bg-orange-500/20 text-orange-400',   label: 'atom'    },
-    charClass:     { border: 'border-emerald-500/60 bg-emerald-500/10 text-emerald-300', badge: 'bg-emerald-500/20 text-emerald-400', label: 'set'  },
-    escape:        { border: 'border-cyan-500/60 bg-cyan-500/10 text-cyan-300',       badge: 'bg-cyan-500/20 text-cyan-400',       label: 'esc'     },
-    anchor:        { border: 'border-rose-500/60 bg-rose-500/10 text-rose-300',       badge: 'bg-rose-500/20 text-rose-400',       label: 'anchor'  },
-    wildcard:      { border: 'border-yellow-500/60 bg-yellow-500/10 text-yellow-300', badge: 'bg-yellow-500/20 text-yellow-400',   label: 'any'     },
-    literal:       { border: 'border-slate-700/40 bg-transparent text-slate-400',     badge: '',                                   label: 'lit'     },
-    backreference: { border: 'border-pink-500/60 bg-pink-500/10 text-pink-300',       badge: 'bg-pink-500/20 text-pink-400',       label: 'backref' },
-    alternation:   { border: 'border-amber-500/60 bg-amber-500/10 text-amber-300',    badge: 'bg-amber-500/20 text-amber-400',     label: 'alt'     },
-    sequence:      { border: 'border-transparent bg-transparent text-slate-400',      badge: '',                                   label: ''        },
-    error:         { border: 'border-red-500/60 bg-red-500/10 text-red-300',          badge: 'bg-red-500/20 text-red-400',         label: 'ERR'     },
+    group:         { border: 'border-blue-500/60 bg-blue-500/10 text-blue-300',          badge: 'bg-blue-500/20 text-blue-400',       label: 'group'   },
+    nonCapturing:  { border: 'border-slate-500/60 bg-slate-500/10 text-slate-300',       badge: 'bg-slate-500/20 text-slate-400',     label: 'ncg'     },
+    lookahead:     { border: 'border-violet-500/60 bg-violet-500/10 text-violet-300',    badge: 'bg-violet-500/20 text-violet-400',   label: 'look→'   },
+    lookbehind:    { border: 'border-purple-500/60 bg-purple-500/10 text-purple-300',    badge: 'bg-purple-500/20 text-purple-400',   label: '←look'   },
+    atomic:        { border: 'border-orange-500/60 bg-orange-500/10 text-orange-300',    badge: 'bg-orange-500/20 text-orange-400',   label: 'atom'    },
+    charClass:     { border: 'border-emerald-500/60 bg-emerald-500/10 text-emerald-300', badge: 'bg-emerald-500/20 text-emerald-400', label: 'set'     },
+    escape:        { border: 'border-cyan-500/60 bg-cyan-500/10 text-cyan-300',          badge: 'bg-cyan-500/20 text-cyan-400',       label: 'esc'     },
+    anchor:        { border: 'border-rose-500/60 bg-rose-500/10 text-rose-300',          badge: 'bg-rose-500/20 text-rose-400',       label: 'anchor'  },
+    wildcard:      { border: 'border-yellow-500/60 bg-yellow-500/10 text-yellow-300',    badge: 'bg-yellow-500/20 text-yellow-400',   label: 'any'     },
+    literal:       { border: 'border-slate-700/40 bg-transparent text-slate-400',        badge: '',                                   label: 'lit'     },
+    backreference: { border: 'border-pink-500/60 bg-pink-500/10 text-pink-300',          badge: 'bg-pink-500/20 text-pink-400',       label: 'backref' },
+    alternation:   { border: 'border-amber-500/60 bg-amber-500/10 text-amber-300',       badge: 'bg-amber-500/20 text-amber-400',     label: 'alt'     },
+    sequence:      { border: 'border-transparent bg-transparent text-slate-400',         badge: '',                                   label: ''        },
+    error:         { border: 'border-red-500/60 bg-red-500/10 text-red-300',             badge: 'bg-red-500/20 text-red-400',         label: 'ERR'     },
   };
 
   const CONTAINER_KINDS = new Set([

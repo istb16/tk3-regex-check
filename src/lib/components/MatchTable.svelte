@@ -1,11 +1,11 @@
 <script lang="ts">
   import type { MatchResult } from '../types';
-  import { GROUP_COLORS } from '../highlighter';
-  import { langStore, translations } from '../i18n.svelte';
+  import { groupColor } from '../highlighter';
+  import { langStore } from '../i18n.svelte';
 
   const { matches, flags }: { matches: MatchResult[]; flags: string } = $props();
 
-  const t = $derived(translations[langStore.current]);
+  const t = $derived(langStore.t);
 
   let selected = $state(0);
   const hasIndices = $derived(flags.includes('d'));
@@ -60,14 +60,15 @@
             <div class="text-[10px] uppercase tracking-wider text-slate-600 mb-1">{t.matches.captureGroups}</div>
             <div class="flex flex-col gap-1">
               {#each current.groups as g}
+                {@const c = groupColor(g.index)}
                 <div class="rounded border border-[#1e2030] p-2 flex items-center gap-2 bg-[#13141e]">
                   <span
                     class="text-[10px] px-1.5 py-0.5 rounded font-bold shrink-0"
-                    style="background: {GROUP_COLORS[(g.index - 1) % GROUP_COLORS.length]}22; color: {GROUP_COLORS[(g.index - 1) % GROUP_COLORS.length]}"
+                    style="background: {c}22; color: {c}"
                   >
                     {g.name ? `«${g.name}»` : `#${g.index}`}
                   </span>
-                  <code class="text-sm flex-1 break-all" style="color: {GROUP_COLORS[(g.index - 1) % GROUP_COLORS.length]}">
+                  <code class="text-sm flex-1 break-all" style="color: {c}">
                     {g.value || t.matches.empty}
                   </code>
                   {#if hasIndices}

@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { RegexNode } from '../types';
-  import { langStore, translations } from '../i18n.svelte';
+  import { langStore } from '../i18n.svelte';
   import DiagramNode from './DiagramNode.svelte';
 
   const {
@@ -10,7 +10,7 @@
     ast,
   }: { pattern: string; flags: string; error: string | null; ast: RegexNode } = $props();
 
-  const td = $derived(translations[langStore.current].diagram);
+  const td = $derived(langStore.t.diagram);
 </script>
 
 <div class="p-3">

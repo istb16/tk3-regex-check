@@ -72,8 +72,12 @@ export const GROUP_COLORS = [
   '#f472b6', // pink-400
 ];
 
-export function getMatchColor(index: number) {
+export function getMatchColor(index: number): string {
   return MATCH_COLORS[index % MATCH_COLORS.length];
+}
+
+export function groupColor(index: number): string {
+  return GROUP_COLORS[(index - 1) % GROUP_COLORS.length];
 }
 
 export function buildSegments(text: string, matches: MatchResult[]): TextSegment[] {

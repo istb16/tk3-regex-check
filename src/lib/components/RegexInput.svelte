@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { langStore, translations } from '../i18n.svelte';
+  import { langStore } from '../i18n.svelte';
 
   interface Props {
     pattern: string;
@@ -16,9 +16,8 @@
     onPatternChange, onFlagsChange,
   }: Props = $props();
 
-  const t = $derived(translations[langStore.current]);
+  const t = $derived(langStore.t);
 
-  // Flag keys are static; only tooltips need reactivity
   const FLAG_KEYS = ['g', 'i', 'm', 's', 'u', 'v', 'd', 'y'] as const;
   const flagDefs  = $derived(FLAG_KEYS.map(flag => ({ flag, title: t.flagTooltips[flag] })));
 

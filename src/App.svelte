@@ -2,7 +2,8 @@
   import { parseRegex } from './lib/regex-parser';
   import { buildMatches, buildSegments } from './lib/highlighter';
   import type { Preset } from './lib/types';
-  import { langStore, translations } from './lib/i18n.svelte';
+  import { langStore } from './lib/i18n.svelte';
+  import { loadAppState, saveAppState } from './lib/storage';
   import RegexInput from './lib/components/RegexInput.svelte';
   import TestArea from './lib/components/TestArea.svelte';
   import MatchTable from './lib/components/MatchTable.svelte';
@@ -12,18 +13,21 @@
   import RegexDiagram from './lib/components/RegexDiagram.svelte';
 
   // ─── State ───────────────────────────────────────────────────
-  let pattern     = $state('(?<year>\\d{4})-(?<month>\\d{2})-(?<day>\\d{2})');
-  let flags       = $state('gd');
-  let testText    = $state('Today is 2026-04-21\nRelease: 2025-12-31\nInvalid: 2026/01/01');
-  let activePresetId = $state('named-groups-date');
-  let rightTab    = $state<'diagram' | 'presets'>('diagram');
-  let bottomTab   = $state<'matches' | 'reference'>('matches');
+  const s = loadAppState();
+  let pattern        = $state(s.pattern);
+  let flags          = $state(s.flags);
+  let testText       = $state(s.testText);
+  let activePresetId = $state(s.activePresetId);
+  let rightTab       = $state(s.rightTab);
+  let bottomTab      = $state(s.bottomTab);
+
+  $effect(() => saveAppState({ pattern, flags, testText, activePresetId, rightTab, bottomTab }));
 
   // ─── Derived ─────────────────────────────────────────────────
-  const t = $derived(translations[langStore.current]);
+  const t = $derived(langStore.t);
   const { matches, error, elapsed } = $derived.by(() => buildMatches(pattern, flags, testText));
-  const segments  = $derived(buildSegments(testText, matches));
-  const ast       = $derived(parseRegex(pattern));
+  const segments = $derived(buildSegments(testText, matches));
+  const ast      = $derived(parseRegex(pattern));
 
   const rightTabs  = $derived([
     { id: 'diagram', label: t.tabs.diagram },
@@ -35,9 +39,9 @@
   ]);
 
   function loadPreset(p: Preset) {
-    pattern       = p.pattern;
-    flags         = p.flags;
-    testText      = p.testText;
+    pattern        = p.pattern;
+    flags          = p.flags;
+    testText       = p.testText;
     activePresetId = p.id;
   }
 </script>

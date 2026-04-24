@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { TextSegment, MatchResult } from '../types';
-  import { getMatchColor, GROUP_COLORS } from '../highlighter';
-  import { langStore, translations } from '../i18n.svelte';
+  import { getMatchColor, groupColor } from '../highlighter';
+  import { langStore } from '../i18n.svelte';
 
   interface Props {
     text: string;
@@ -12,7 +12,7 @@
 
   const { text, segments, matches, onTextChange }: Props = $props();
 
-  const t = $derived(translations[langStore.current]);
+  const t = $derived(langStore.t);
 
   let showRaw = $state(false);
 
@@ -54,9 +54,8 @@
           {#if seg.matchIndex === -1}
             <span class="text-slate-500">{seg.text}</span>
           {:else if seg.groupIndex !== -1}
-            <span
-              style="background: {GROUP_COLORS[(seg.groupIndex - 1) % GROUP_COLORS.length]}22; border-bottom: 2px solid {GROUP_COLORS[(seg.groupIndex - 1) % GROUP_COLORS.length]}; color: {GROUP_COLORS[(seg.groupIndex - 1) % GROUP_COLORS.length]}"
-            >{seg.text}</span>
+            {@const c = groupColor(seg.groupIndex)}
+            <span style="background: {c}22; border-bottom: 2px solid {c}; color: {c}">{seg.text}</span>
           {:else}
             <span style="background: {getMatchColor(seg.matchIndex)}; color: #f0f4ff">{seg.text}</span>
           {/if}

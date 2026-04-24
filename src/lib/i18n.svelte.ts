@@ -1,10 +1,15 @@
 export type Lang = 'en' | 'ja';
 
 function createLangStore() {
-  let current = $state<Lang>('en');
+  const stored = localStorage.getItem('regexcheck_lang') as Lang | null;
+  let current = $state<Lang>(stored ?? 'en');
   return {
     get current() { return current; },
-    set(l: Lang) { current = l; },
+    get t()       { return translations[current]; },
+    set(l: Lang) {
+      current = l;
+      localStorage.setItem('regexcheck_lang', l);
+    },
   };
 }
 

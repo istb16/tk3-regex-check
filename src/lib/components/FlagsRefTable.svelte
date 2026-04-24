@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { langStore, translations } from '../i18n.svelte';
+  import { langStore } from '../i18n.svelte';
 
   const { flags }: { flags: string } = $props();
-  const t = $derived(translations[langStore.current]);
+  const t = $derived(langStore.t);
 
   const FLAG_ROWS = [
     { flag: 'g', es: 'ES3'    },
