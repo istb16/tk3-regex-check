@@ -8,13 +8,13 @@
   const { tabs, active, onSelect }: Props = $props();
 </script>
 
-<div class="flex shrink-0 border-b border-[#1e2030]">
+<div class="flex shrink-0 border-b border-line">
   {#each tabs as { id, label }}
     <button
       onclick={() => onSelect(id)}
       class="px-4 py-2 text-xs font-semibold transition-colors {active === id
-        ? 'text-violet-300 border-b-2 border-violet-500 -mb-px'
-        : 'text-slate-600 hover:text-slate-400'}"
+        ? 'text-accent border-b-2 border-accent -mb-px'
+        : 'text-muted hover:text-ink'}"
     >{label}</button>
   {/each}
 </div>
