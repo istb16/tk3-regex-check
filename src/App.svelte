@@ -79,15 +79,15 @@
     />
   </div>
 
-  <!-- Main 2-column layout -->
-  <div class="flex flex-1 min-h-0 overflow-hidden">
+  <!-- Main 2-column layout. Below md (768px) the columns stack and the page scrolls. -->
+  <div class="flex flex-col md:flex-row flex-1 md:min-h-0 md:overflow-hidden">
 
     <!-- Left: test area + bottom tabs -->
-    <div class="flex flex-col flex-1 min-w-0 overflow-hidden border-r border-line">
-      <div class="flex flex-col border-b border-line" style="height: 55%">
+    <div class="flex flex-col md:flex-1 min-w-0 md:overflow-hidden md:border-r border-line">
+      <div class="flex flex-col border-b border-line h-[40svh] md:h-[55%]">
         <TestArea text={testText} {segments} {matches} onTextChange={(v) => (testText = v)} />
       </div>
-      <div class="flex flex-col" style="height: 45%">
+      <div class="flex flex-col h-[50svh] md:h-[45%]">
         <TabBar
           tabs={bottomTabs}
           active={bottomTab}
@@ -104,13 +104,13 @@
     </div>
 
     <!-- Right: diagram / presets -->
-    <div class="w-[380px] shrink-0 flex flex-col overflow-hidden">
+    <div class="w-full md:w-[380px] shrink-0 flex flex-col md:overflow-hidden border-t md:border-t-0 border-line">
       <TabBar
         tabs={rightTabs}
         active={rightTab}
         onSelect={(id) => (rightTab = id as typeof rightTab)}
       />
-      <div class="flex-1 min-h-0 overflow-y-auto">
+      <div class="md:flex-1 md:min-h-0 md:overflow-y-auto">
         {#if rightTab === 'diagram'}
           <RegexDiagram {pattern} {flags} {error} {ast} />
         {:else}

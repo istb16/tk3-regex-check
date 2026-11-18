@@ -33,8 +33,8 @@
 </script>
 
 <div class="flex flex-col gap-2">
-  <!-- Pattern bar -->
-  <div class="pattern-bar flex items-stretch rounded-lg overflow-hidden border {error ? 'border-danger' : 'border-line-strong focus-within:border-accent'} transition-colors">
+  <!-- Pattern bar. Below md the flags move to their own row under the pattern. -->
+  <div class="pattern-bar flex flex-wrap md:flex-nowrap items-stretch rounded-lg overflow-hidden border {error ? 'border-danger' : 'border-line-strong focus-within:border-accent'} transition-colors">
     <span class="flex items-center px-3 text-rx-violet text-lg font-mono bg-surface-2 select-none">/</span>
     <input
       type="text"
@@ -43,10 +43,10 @@
       placeholder={t.regex.placeholder}
       spellcheck="false"
       autocomplete="off"
-      class="flex-1 bg-surface text-ink font-mono text-sm px-2 py-2.5 outline-none placeholder:text-muted"
+      class="flex-1 min-w-0 bg-surface text-ink font-mono text-sm px-2 py-2.5 outline-none placeholder:text-muted"
     />
     <span class="flex items-center px-1 text-rx-violet text-lg font-mono bg-surface-2 select-none">/</span>
-    <div class="flex items-center gap-0.5 px-2 bg-surface-2">
+    <div class="flex items-center justify-end gap-0.5 px-2 py-1 md:py-0 bg-surface-2 basis-full md:basis-auto border-t md:border-t-0 border-line">
       {#each flagDefs as { flag, title }}
         <button
           onclick={() => toggleFlag(flag)}
