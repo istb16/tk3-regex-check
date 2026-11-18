@@ -41,7 +41,7 @@
       oninput={(e) => onTextChange((e.target as HTMLTextAreaElement).value)}
       spellcheck="false"
       placeholder={t.test.placeholder}
-      class="absolute inset-0 w-full h-full resize-none bg-transparent text-transparent caret-ink font-mono text-sm leading-6 p-3 outline-none placeholder:text-muted z-10 selection:bg-accent/30"
+      class="test-input absolute inset-0 w-full h-full resize-none bg-transparent text-transparent caret-ink font-mono text-sm leading-6 p-3 outline-none placeholder:text-muted z-10 selection:bg-accent/30"
     ></textarea>
 
     <!-- Highlight overlay (behind textarea) -->

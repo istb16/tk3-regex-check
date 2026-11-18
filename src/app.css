@@ -14,6 +14,7 @@
   --color-body: var(--tk-body);
   --color-muted: var(--tk-muted);
   --color-line: var(--tk-line);
+  --color-line-strong: var(--tk-line-strong);
   --color-accent: var(--tk-accent);
   --color-on-accent: var(--tk-on-accent);
   --color-danger: var(--tk-danger);
@@ -97,4 +98,26 @@
 .tk-footer.app-footer {
   padding-block: 8px;
   border-block-start: 1px solid var(--tk-line);
+}
+
+/*
+ * Focus rings. tk-base.css draws a 2px ring outside every focused control; where a
+ * parent clips it (overflow), draw it elsewhere. These rules are unlayered so they
+ * win over tk-base.css, as Tailwind utilities would not.
+ */
+
+/* the pattern bar clips its input, so the ring goes around the whole bar */
+.pattern-bar:has(input:focus-visible) {
+  outline: 2px solid var(--tk-accent);
+  outline-offset: 2px;
+}
+
+.pattern-bar input:focus-visible {
+  outline: none;
+}
+
+/* the test text and the tabs reach the edges of their panes: draw the ring inside */
+.test-input:focus-visible,
+.tab-btn:focus-visible {
+  outline-offset: -2px;
 }

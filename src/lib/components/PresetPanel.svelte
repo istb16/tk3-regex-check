@@ -26,7 +26,7 @@
     type="search"
     placeholder={t.presets.searchPlaceholder}
     bind:value={search}
-    class="w-full bg-surface border border-line rounded px-2.5 py-1.5 text-xs text-ink focus:border-accent placeholder:text-muted"
+    class="w-full bg-surface border border-line-strong rounded px-2.5 py-1.5 text-xs text-ink focus:border-accent placeholder:text-muted"
   />
 
   <!-- Category filter -->

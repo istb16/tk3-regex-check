@@ -34,7 +34,7 @@
 
 <div class="flex flex-col gap-2">
   <!-- Pattern bar -->
-  <div class="flex items-stretch rounded-lg overflow-hidden border {error ? 'border-danger' : 'border-line focus-within:border-accent'} transition-colors">
+  <div class="pattern-bar flex items-stretch rounded-lg overflow-hidden border {error ? 'border-danger' : 'border-line-strong focus-within:border-accent'} transition-colors">
     <span class="flex items-center px-3 text-rx-violet text-lg font-mono bg-surface-2 select-none">/</span>
     <input
       type="text"

@@ -53,7 +53,7 @@
     <a class="tk-header__home" href="/">
       <img src="/icon.svg" alt="" class="tk-header__icon" />
       <h1 class="tk-header__name">Regex Check</h1>
-      <span class="text-xs text-muted whitespace-nowrap">{t.header.subtitle}</span>
+      <span class="hidden sm:inline text-xs text-muted whitespace-nowrap">{t.header.subtitle}</span>
     </a>
     <div class="tk-header__end text-xs">
       {#each (['en', 'ja'] as const) as l}

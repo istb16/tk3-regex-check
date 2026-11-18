@@ -14,7 +14,7 @@
 
 ## 配色
 
-色は `src/tk-base.css`（tk3 apps の共通の土台。手を加えない）の `--tk-*` と、`src/app.css` にある構文の色 `--rx-*` から取る。どちらもライトとダークの値を持ち、`src/app.css` で Tailwind の色名（`bg-surface`・`text-muted`・`text-rx-blue` など）に結び付けている。コンポーネントには色の値（16 進数や `slate-500` などの Tailwind の色）を直に書かない。
+色は `src/tk-base.css`（tk3 apps の共通の土台。手を加えない）の `--tk-*` と、`src/app.css` にある構文の色 `--rx-*` から取る。どちらもライトとダークの値を持ち、`src/app.css` で Tailwind の色名（`bg-surface`・`text-muted`・`text-rx-blue` など）に結び付けている。コンポーネントには色の値（16 進数や `slate-500` などの Tailwind の色）を直に書かない。入力欄の枠は `border-line-strong`（地との差 3:1 以上）、区切り線やパネルの枠は `border-line` にする。
 
 ## 技術スタック
 
