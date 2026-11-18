@@ -46,31 +46,30 @@
   }
 </script>
 
-<div class="min-h-screen bg-[#09090f] flex flex-col font-mono">
+<div class="min-h-screen bg-surface text-ink flex flex-col font-mono">
 
   <!-- Header -->
-  <header class="border-b border-[#1e2030] px-4 py-2.5 flex items-center gap-4 shrink-0">
-    <div class="flex items-center gap-2.5">
-      <span class="text-violet-400 text-lg font-bold select-none">/.*?/</span>
-      <div>
-        <h1 class="text-sm font-bold text-[#f0f4ff] leading-none m-0 p-0">RegexCheck</h1>
-        <p class="text-[10px] text-slate-600 leading-none mt-0.5 m-0">{t.header.subtitle}</p>
-      </div>
-    </div>
-    <div class="ml-auto flex items-center gap-1 text-[11px]">
+  <header class="tk-header font-sans shrink-0">
+    <a class="tk-header__home" href="/">
+      <img src="/icon.svg" alt="" class="tk-header__icon" />
+      <h1 class="tk-header__name">Regex Check</h1>
+      <span class="hidden sm:inline text-xs text-muted whitespace-nowrap">{t.header.subtitle}</span>
+    </a>
+    <div class="tk-header__end text-xs">
       {#each (['en', 'ja'] as const) as l}
         <button
           onclick={() => langStore.set(l)}
+          aria-pressed={langStore.current === l}
           class="px-2 py-0.5 rounded border transition-colors {langStore.current === l
-            ? 'border-violet-500/60 bg-violet-500/20 text-violet-300'
-            : 'border-[#1e2030] text-slate-600 hover:text-slate-400 hover:border-[#2d3050]'}"
+            ? 'border-accent bg-accent text-on-accent'
+            : 'border-line text-muted hover:text-ink hover:border-muted'}"
         >{l.toUpperCase()}</button>
       {/each}
     </div>
   </header>
 
   <!-- Regex input bar -->
-  <div class="border-b border-[#1e2030] px-4 py-3 shrink-0">
+  <div class="border-b border-line px-4 py-3 shrink-0">
     <RegexInput
       {pattern} {flags} {error}
       matchCount={matches.length}
@@ -84,8 +83,8 @@
   <div class="flex flex-1 min-h-0 overflow-hidden">
 
     <!-- Left: test area + bottom tabs -->
-    <div class="flex flex-col flex-1 min-w-0 overflow-hidden border-r border-[#1e2030]">
-      <div class="flex flex-col border-b border-[#1e2030]" style="height: 55%">
+    <div class="flex flex-col flex-1 min-w-0 overflow-hidden border-r border-line">
+      <div class="flex flex-col border-b border-line" style="height: 55%">
         <TestArea text={testText} {segments} {matches} onTextChange={(v) => (testText = v)} />
       </div>
       <div class="flex flex-col" style="height: 45%">
@@ -121,4 +120,8 @@
     </div>
 
   </div>
+
+  <footer class="tk-footer app-footer font-sans shrink-0">
+    <a href="https://tk3.biz/">tk3.biz</a>
+  </footer>
 </div>

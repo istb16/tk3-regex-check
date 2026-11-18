@@ -1,31 +1,123 @@
 @import "tailwindcss";
 
-@theme {
-  --color-bg: #09090f;
-  --color-surface: #0f1018;
-  --color-panel: #13141e;
-  --color-border: #1e2030;
-  --color-border-hover: #2d3050;
-  --color-text: #c8d0e0;
-  --color-text-dim: #6b7280;
-  --color-text-bright: #f0f4ff;
-  --color-accent: #7c3aed;
-  --color-accent-glow: rgba(124, 58, 237, 0.25);
-  --font-mono: "JetBrains Mono", "Cascadia Code", ui-monospace, monospace;
+/*
+ * tk-base.css (the shared tk3 apps base) is imported before this file in main.ts.
+ * The Tailwind colors below point at CSS variables, so every color has a light and a
+ * dark value. Do not write raw color values (hex, Tailwind palette names) in components.
+ */
+@theme inline {
+  /* the shared tokens from tk-base.css */
+  --color-bg: var(--tk-bg);
+  --color-surface: var(--tk-surface);
+  --color-surface-2: var(--tk-surface-2);
+  --color-ink: var(--tk-ink);
+  --color-body: var(--tk-body);
+  --color-muted: var(--tk-muted);
+  --color-line: var(--tk-line);
+  --color-line-strong: var(--tk-line-strong);
+  --color-accent: var(--tk-accent);
+  --color-on-accent: var(--tk-on-accent);
+  --color-danger: var(--tk-danger);
+  --color-success: var(--tk-green);
+
+  /* the syntax colors of this app (diagram nodes, legend, badges) */
+  --color-rx-blue: var(--rx-blue);
+  --color-rx-slate: var(--rx-slate);
+  --color-rx-violet: var(--rx-violet);
+  --color-rx-purple: var(--rx-purple);
+  --color-rx-orange: var(--rx-orange);
+  --color-rx-emerald: var(--rx-emerald);
+  --color-rx-cyan: var(--rx-cyan);
+  --color-rx-rose: var(--rx-rose);
+  --color-rx-yellow: var(--rx-yellow);
+  --color-rx-pink: var(--rx-pink);
+  --color-rx-amber: var(--rx-amber);
+
+  --font-sans: var(--tk-font);
+  --font-mono: "JetBrains Mono", "Cascadia Code", var(--tk-font-mono);
 }
 
 :root {
-  color-scheme: dark;
+  --tk-accent: var(--tk-green);
+
+  /* syntax colors: 4.5:1 or more on the surfaces and on a node (10% tint) with a badge (another 10%); a 70% border stays 3:1 or more */
+  --rx-blue: #1E40AF;
+  --rx-slate: #334155;
+  --rx-violet: #5B21B6;
+  --rx-purple: #6B21A8;
+  --rx-orange: #9A3412;
+  --rx-emerald: #065F46;
+  --rx-cyan: #155E75;
+  --rx-rose: #9F1239;
+  --rx-yellow: #713F12;
+  --rx-pink: #9D174D;
+  --rx-amber: #92400E;
 }
 
-body {
-  background: var(--color-bg);
-  color: var(--color-text);
-  font-family: var(--font-mono);
+@media (prefers-color-scheme: dark) {
+  :root {
+    --rx-blue: #93C5FD;
+    --rx-slate: #CBD5E1;
+    --rx-violet: #C4B5FD;
+    --rx-purple: #D8B4FE;
+    --rx-orange: #FDBA74;
+    --rx-emerald: #6EE7B7;
+    --rx-cyan: #67E8F9;
+    --rx-rose: #FDA4AF;
+    --rx-yellow: #FDE047;
+    --rx-pink: #F9A8D4;
+    --rx-amber: #FCD34D;
+  }
+}
+
+:root {
+  /* capture groups in the test text and the match table (see GROUP_COLORS) */
+  --rx-group-1: var(--rx-purple);
+  --rx-group-2: var(--rx-cyan);
+  --rx-group-3: var(--rx-emerald);
+  --rx-group-4: var(--rx-amber);
+  --rx-group-5: var(--rx-rose);
+  --rx-group-6: var(--rx-pink);
+
+  /* whole-match backgrounds in the test text (see MATCH_COLORS); the text on them is --tk-ink */
+  --rx-match-1: color-mix(in srgb, var(--rx-violet) 30%, transparent);
+  --rx-match-2: color-mix(in srgb, var(--rx-cyan) 30%, transparent);
+  --rx-match-3: color-mix(in srgb, var(--rx-emerald) 30%, transparent);
+  --rx-match-4: color-mix(in srgb, var(--rx-amber) 30%, transparent);
+  --rx-match-5: color-mix(in srgb, var(--rx-rose) 30%, transparent);
+  --rx-match-6: color-mix(in srgb, var(--rx-pink) 30%, transparent);
 }
 
 /* Scrollbar styling */
 * {
   scrollbar-width: thin;
-  scrollbar-color: #2d3050 transparent;
+  scrollbar-color: var(--tk-muted) transparent;
+}
+
+/* a slim footer under the full-height workspace */
+.tk-footer.app-footer {
+  padding-block: 8px;
+  border-block-start: 1px solid var(--tk-line);
+}
+
+/*
+ * Focus rings. tk-base.css draws a 2px ring outside every focused control; where a
+ * parent clips it (overflow), draw it elsewhere. These rules are unlayered so they
+ * win over tk-base.css, as Tailwind utilities would not.
+ */
+
+/* the pattern bar clips its input, so the ring goes around the whole bar */
+.pattern-bar:has(input:focus-visible) {
+  outline: 2px solid var(--tk-accent);
+  outline-offset: 2px;
+}
+
+.pattern-bar input:focus-visible {
+  outline: none;
+}
+
+/* the test text and the tabs reach the edges of their panes: draw the ring inside */
+.test-input:focus-visible,
+.tab-btn:focus-visible {
+  outline-offset: -2px;
 }

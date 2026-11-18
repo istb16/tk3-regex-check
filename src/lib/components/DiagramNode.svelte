@@ -8,20 +8,20 @@
 
   // border/background/text, badge background/text, short label — all in one place
   const NODE_STYLES: Record<string, { border: string; badge: string; label: string }> = {
-    group:         { border: 'border-blue-500/60 bg-blue-500/10 text-blue-300',          badge: 'bg-blue-500/20 text-blue-400',       label: 'group'   },
-    nonCapturing:  { border: 'border-slate-500/60 bg-slate-500/10 text-slate-300',       badge: 'bg-slate-500/20 text-slate-400',     label: 'ncg'     },
-    lookahead:     { border: 'border-violet-500/60 bg-violet-500/10 text-violet-300',    badge: 'bg-violet-500/20 text-violet-400',   label: 'look→'   },
-    lookbehind:    { border: 'border-purple-500/60 bg-purple-500/10 text-purple-300',    badge: 'bg-purple-500/20 text-purple-400',   label: '←look'   },
-    atomic:        { border: 'border-orange-500/60 bg-orange-500/10 text-orange-300',    badge: 'bg-orange-500/20 text-orange-400',   label: 'atom'    },
-    charClass:     { border: 'border-emerald-500/60 bg-emerald-500/10 text-emerald-300', badge: 'bg-emerald-500/20 text-emerald-400', label: 'set'     },
-    escape:        { border: 'border-cyan-500/60 bg-cyan-500/10 text-cyan-300',          badge: 'bg-cyan-500/20 text-cyan-400',       label: 'esc'     },
-    anchor:        { border: 'border-rose-500/60 bg-rose-500/10 text-rose-300',          badge: 'bg-rose-500/20 text-rose-400',       label: 'anchor'  },
-    wildcard:      { border: 'border-yellow-500/60 bg-yellow-500/10 text-yellow-300',    badge: 'bg-yellow-500/20 text-yellow-400',   label: 'any'     },
-    literal:       { border: 'border-slate-700/40 bg-transparent text-slate-400',        badge: '',                                   label: 'lit'     },
-    backreference: { border: 'border-pink-500/60 bg-pink-500/10 text-pink-300',          badge: 'bg-pink-500/20 text-pink-400',       label: 'backref' },
-    alternation:   { border: 'border-amber-500/60 bg-amber-500/10 text-amber-300',       badge: 'bg-amber-500/20 text-amber-400',     label: 'alt'     },
-    sequence:      { border: 'border-transparent bg-transparent text-slate-400',         badge: '',                                   label: ''        },
-    error:         { border: 'border-red-500/60 bg-red-500/10 text-red-300',             badge: 'bg-red-500/20 text-red-400',         label: 'ERR'     },
+    group:         { border: 'border-rx-blue/70 bg-rx-blue/10 text-rx-blue',          badge: 'bg-rx-blue/10 text-rx-blue',       label: 'group'   },
+    nonCapturing:  { border: 'border-rx-slate/70 bg-rx-slate/10 text-rx-slate',       badge: 'bg-rx-slate/10 text-rx-slate',     label: 'ncg'     },
+    lookahead:     { border: 'border-rx-violet/70 bg-rx-violet/10 text-rx-violet',    badge: 'bg-rx-violet/10 text-rx-violet',   label: 'look→'   },
+    lookbehind:    { border: 'border-rx-purple/70 bg-rx-purple/10 text-rx-purple',    badge: 'bg-rx-purple/10 text-rx-purple',   label: '←look'   },
+    atomic:        { border: 'border-rx-orange/70 bg-rx-orange/10 text-rx-orange',    badge: 'bg-rx-orange/10 text-rx-orange',   label: 'atom'    },
+    charClass:     { border: 'border-rx-emerald/70 bg-rx-emerald/10 text-rx-emerald', badge: 'bg-rx-emerald/10 text-rx-emerald', label: 'set'     },
+    escape:        { border: 'border-rx-cyan/70 bg-rx-cyan/10 text-rx-cyan',          badge: 'bg-rx-cyan/10 text-rx-cyan',       label: 'esc'     },
+    anchor:        { border: 'border-rx-rose/70 bg-rx-rose/10 text-rx-rose',          badge: 'bg-rx-rose/10 text-rx-rose',       label: 'anchor'  },
+    wildcard:      { border: 'border-rx-yellow/70 bg-rx-yellow/10 text-rx-yellow',    badge: 'bg-rx-yellow/10 text-rx-yellow',   label: 'any'     },
+    literal:       { border: 'border-line bg-transparent text-body',        badge: '',                                   label: 'lit'     },
+    backreference: { border: 'border-rx-pink/70 bg-rx-pink/10 text-rx-pink',          badge: 'bg-rx-pink/10 text-rx-pink',       label: 'backref' },
+    alternation:   { border: 'border-rx-amber/70 bg-rx-amber/10 text-rx-amber',       badge: 'bg-rx-amber/10 text-rx-amber',     label: 'alt'     },
+    sequence:      { border: 'border-transparent bg-transparent text-body',         badge: '',                                   label: ''        },
+    error:         { border: 'border-danger/70 bg-danger/10 text-danger',             badge: 'bg-danger/10 text-danger',         label: 'ERR'     },
   };
 
   const CONTAINER_KINDS = new Set([
@@ -46,16 +46,16 @@
   <div class="flex flex-col gap-0.5 border rounded {styles.border} px-2 py-1">
     <div class="flex items-center gap-1 text-xs mb-1">
       <span class="px-1 py-0.5 rounded text-[10px] font-bold {styles.badge}">{styles.label}</span>
-      <span class="text-amber-300/70 text-[10px]">{node.label}</span>
+      <span class="text-rx-amber text-[10px]">{node.label}</span>
       {#if node.quantifier}
-        <span class="ml-auto text-[10px] bg-amber-400/20 text-amber-300 px-1 rounded">{node.quantifier.raw}</span>
+        <span class="ml-auto text-[10px] bg-rx-amber/10 text-rx-amber px-1 rounded">{node.quantifier.raw}</span>
       {/if}
     </div>
     {#each node.children ?? [] as branch, i}
       {#if i > 0}
-        <div class="text-center text-[10px] text-amber-500/60 select-none">{td.or}</div>
+        <div class="text-center text-[10px] text-rx-amber select-none">{td.or}</div>
       {/if}
-      <div class="pl-2 border-l border-amber-500/30">
+      <div class="pl-2 border-l border-rx-amber/50">
         <DiagramNode node={branch} depth={depth + 1} />
       </div>
     {/each}
@@ -65,23 +65,23 @@
   <div class="border rounded {styles.border} px-2 py-1 flex flex-col gap-1">
     <div class="flex items-center gap-1.5">
       <span class="text-[10px] font-bold px-1 py-0.5 rounded {styles.badge}">{styles.label}</span>
-      <span class="text-[11px] opacity-80 truncate max-w-[180px]">{node.label}</span>
+      <span class="text-[11px] truncate max-w-[180px]">{node.label}</span>
       {#if node.negative}
-        <span class="text-[10px] bg-red-500/20 text-red-400 px-1 rounded">{td.neg}</span>
+        <span class="text-[10px] bg-danger/10 text-danger px-1 rounded">{td.neg}</span>
       {/if}
       {#if node.quantifier}
-        <span class="ml-auto text-[10px] bg-amber-400/20 text-amber-300 px-1 rounded shrink-0">{node.quantifier.raw}</span>
+        <span class="ml-auto text-[10px] bg-rx-amber/10 text-rx-amber px-1 rounded shrink-0">{node.quantifier.raw}</span>
       {/if}
       {#if (node.children?.length ?? 0) > 0}
         <button
           onclick={() => (collapsed = !collapsed)}
-          class="ml-1 text-[10px] opacity-40 hover:opacity-100 shrink-0 leading-none"
+          class="ml-1 text-[10px] text-muted hover:text-ink shrink-0 leading-none"
           title={collapsed ? td.expand : td.collapse}
         >{collapsed ? '▶' : '▼'}</button>
       {/if}
     </div>
     {#if !collapsed}
-      <div class="pl-2 border-l border-current/20 flex flex-col gap-1">
+      <div class="pl-2 border-l border-current/30 flex flex-col gap-1">
         {#each node.children ?? [] as child}
           <DiagramNode node={child} depth={depth + 1} />
         {/each}
@@ -94,15 +94,15 @@
   <div class="inline-flex flex-col items-start border rounded px-1.5 py-0.5 {styles.border}" title={node.label}>
     <div class="flex items-center gap-1">
       {#if styles.label && node.kind !== 'literal'}
-        <span class="text-[9px] font-bold {styles.badge} px-0.5 rounded opacity-80">{styles.label}</span>
+        <span class="text-[9px] font-bold {styles.badge} px-0.5 rounded">{styles.label}</span>
       {/if}
       <code class="text-[12px] font-mono">{node.raw}</code>
       {#if node.quantifier}
-        <span class="text-[10px] bg-amber-400/20 text-amber-300 px-1 rounded">{node.quantifier.raw}</span>
+        <span class="text-[10px] bg-rx-amber/10 text-rx-amber px-1 rounded">{node.quantifier.raw}</span>
       {/if}
     </div>
     {#if node.kind !== 'literal'}
-      <span class="text-[9px] opacity-60 truncate max-w-[140px]">{node.label}</span>
+      <span class="text-[9px] text-muted truncate max-w-[140px]">{node.label}</span>
     {/if}
   </div>
 {/if}

@@ -54,23 +54,29 @@ export function buildMatches(
   }
 }
 
+// The colors are CSS variables defined in app.css, with light and dark values.
 const MATCH_COLORS = [
-  'rgba(124,58,237,0.3)',   // violet
-  'rgba(6,182,212,0.3)',    // cyan
-  'rgba(16,185,129,0.3)',   // emerald
-  'rgba(245,158,11,0.3)',   // amber
-  'rgba(239,68,68,0.3)',    // red
-  'rgba(236,72,153,0.3)',   // pink
+  'var(--rx-match-1)', // violet
+  'var(--rx-match-2)', // cyan
+  'var(--rx-match-3)', // emerald
+  'var(--rx-match-4)', // amber
+  'var(--rx-match-5)', // rose
+  'var(--rx-match-6)', // pink
 ];
 
 export const GROUP_COLORS = [
-  '#c084fc', // purple-400
-  '#22d3ee', // cyan-400
-  '#34d399', // emerald-400
-  '#fbbf24', // amber-400
-  '#f87171', // red-400
-  '#f472b6', // pink-400
+  'var(--rx-group-1)', // purple
+  'var(--rx-group-2)', // cyan
+  'var(--rx-group-3)', // emerald
+  'var(--rx-group-4)', // amber
+  'var(--rx-group-5)', // rose
+  'var(--rx-group-6)', // pink
 ];
+
+/** A faint background in the given color (for a capture group's chip or text). */
+export function tint(color: string, percent = 15): string {
+  return `color-mix(in srgb, ${color} ${percent}%, transparent)`;
+}
 
 export function getMatchColor(index: number): string {
   return MATCH_COLORS[index % MATCH_COLORS.length];
